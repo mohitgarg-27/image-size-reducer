@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer</title>
+</head>
+<body>
+    <h1>Image Resizer</h1>
+    <form action="/resize" method="post" enctype="multipart/form-data">
+        <label for="file">Choose an image:</label>
+        <input type="file" name="file" accept="image/*" required>
+        <br>
+        <label for="scale_percent">Choose reduction percentage:</label>
+        <input type="range" name="scale_percent" id="scale_percent" min="1" max="100" value="50" oninput="updateOutput()">
+        <output for="scale_percent" id="output">50%</output>
+        <br>
+        <label id="estimated_size_label" style="display:none;">Estimated size after resize:</label>
+        <span id="estimated_size" style="display:none;"></span>
+        <br>
+        <button type="submit">Resize</button>
+    </form>
+
+    {% if uploaded_image %}
+    <h2>Uploaded Image Details:</h2>
+    <p>Original Size: {{ original_width }} x {{ original_height }}</p>
+    <p>Original Dimensions: {{ original_dimensions }}</p>
+    <img src="{{ uploaded_image }}" alt="Uploaded Image">
+    {% endif %}
+
+    {% if resized_image %}
+    <h2>Resized Image Details:</h2>
+    <p>New Size: {{ resized_width }} x {{ resized_height }}</p>
+    <p>New Dimensions: {{ resized_dimensions }}</p>
+    <img src="{{ resized_image }}" alt="Resized Image">
+    {% endif %}
+
+    <script>
+        function updateOutput() {
+            var slider = document.getElementById("scale_percent");
+            var output = document.getElementById("output");
+            output.innerHTML = slider.value + "%";
+    
+            var originalFileSize = { original_file_size };
+            var estimatedSize = (originalFileSize * (slider.value / 100)).toFixed(2);
+            var sizeLabel = document.getElementById("estimated_size_label");
+            var sizeSpan = document.getElementById("estimated_size");
+    
+            if (estimatedSize < 1024) {
+                sizeSpan.innerText = estimatedSize + " bytes";
+            } else if (estimatedSize < 1048576) {
+                sizeSpan.innerText = (estimatedSize / 1024).toFixed(2) + " KB";
+            } else {
+                sizeSpan.innerText = (estimatedSize / 1048576).toFixed(2) + " MB";
+            }
+    
+            sizeLabel.style.display = "block";
+            sizeSpan.style.display = "block";
+        }
+    </script>
+    
+</body>
+</html>
